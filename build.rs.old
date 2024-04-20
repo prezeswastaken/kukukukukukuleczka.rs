@@ -13,4 +13,17 @@ fn main() {
 
     let variable_value = String::from_utf8(output.stdout).unwrap().trim().to_string();
     println!("cargo:rustc-env=OPENAI_API_KEY={}", variable_value);
+
+    let output = Command::new("bash")
+        .arg("-c")
+        .arg("source .env && echo $APP_PORT")
+        .output()
+        .expect("Failed to execute command");
+
+    if !output.stderr.is_empty() {
+        eprintln!("Error: {}", String::from_utf8_lossy(&output.stderr));
+    }
+
+    let variable_value = String::from_utf8(output.stdout).unwrap().trim().to_string();
+    println!("cargo:rustc-env=APP_PORT={}", variable_value);
 }
