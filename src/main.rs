@@ -39,15 +39,17 @@ async fn main() -> anyhow::Result<()> {
     // println!("Response: {}", message.content);
 
     let basic_form = BasicForm {
-        full_name: "Kacper Preyzner".to_string(),
+        full_name: "Michael Scott".to_string(),
         email: "test@test.com".to_string(),
         programming_languages: vec!["PHP".to_string(), "Rust".to_string()],
         education_level: "Inżynier".to_string(),
     };
 
-    let cv_builder = CVBuilder::from(basic_form);
-    let cv_string = cv_builder.create_cv_string();
-    println!("CV: {}", cv_string);
+    let cv_string = CVBuilder::from(basic_form).create_cv_string();
+    match cv_string {
+        Ok(cv) => println!("CV: {}", cv),
+        Err(e) => eprintln!("Error: {}", e),
+    }
 
     let app = Router::new().route("/", get(hello));
 

@@ -1,4 +1,5 @@
 use crate::forms::BasicForm;
+use anyhow::anyhow;
 use openai_api_rust::chat::*;
 use openai_api_rust::completions::*;
 use openai_api_rust::*;
@@ -21,8 +22,8 @@ impl From<BasicForm> for CVBuilder {
 }
 
 impl CVBuilder {
-    pub fn create_cv_string(&self) -> String {
-        let auth = Auth::from_env().expect("Could not get OPENAI_API_KEY from env");
+    pub fn create_cv_string(&self) -> anyhow::Result<String> {
+        let auth = Auth::from_env().map_err(|_| anyhow!("Couldn't read api key from env file"))?;
         let openai = OpenAI::new(auth, "https://api.openai.com/v1/");
         let body = ChatBody {
             model: "gpt-3.5-turbo".to_string(),
@@ -42,9 +43,9 @@ impl CVBuilder {
             }],
         };
         let response = openai.chat_completion_create(&body);
-        let choice = response.unwrap().choices;
-        let message = &choice[0].message.as_ref().unwrap();
-        message.content.clone()
+        let choice = response.map_err(|_| anyhow!("Something went wrong with response :("))?.choices;
+        let message = &choice[0].message.as_ref().ok_or_else(|| anyhow!("Couldn't get message from response"))?;
+        Ok(message.content.clone())
     }
 }
 
