@@ -10,5 +10,7 @@ anyhow = "1.0.82"
 axum = { version = "0.7.5", features = ["macros"] }
 axum-macros = "0.4.1"
 dotenvy = "0.15.7"
+openai-api = "0.1.4"
+openai_api_rust = "0.1.8"
 serde = { version = "1.0.198", features = ["derive"] }
 tokio = { version = "1.37.0", features = ["full"] }

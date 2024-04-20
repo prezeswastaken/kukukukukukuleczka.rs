@@ -9,7 +9,6 @@ impl Config {
         let app_port = std::env::var("APP_PORT").expect("APP_PORT is not set");
         println!("APP_PORT: {}", app_port);
         let openai_api_key = std::env::var("OPENAI_API_KEY").expect("OPENAI_API_KEY is not set");
-        println!("OPENAI_API_KEY: {}", openai_api_key);
 
         Self {
             openai_api_key,
