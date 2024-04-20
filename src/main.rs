@@ -1,7 +1,7 @@
+use serde_json::json;
+use tower_http::cors::{Any, CorsLayer};
 use axum::{
-    http::StatusCode,
-    routing::{get, post},
-    Json, Router,
+    http::StatusCode, response::IntoResponse, routing::{get, post}, Json, Router
 };
 use openai_api_rust::chat::*;
 use openai_api_rust::completions::*;
@@ -45,13 +45,16 @@ async fn main() -> anyhow::Result<()> {
         education_level: "Inżynier".to_string(),
     };
 
-    let cv_string = CVBuilder::from(basic_form).create_cv_string();
-    match cv_string {
-        Ok(cv) => println!("CV: {}", cv),
-        Err(e) => eprintln!("Error: {}", e),
-    }
+    // let cv_string = CVBuilder::from(basic_form).create_cv_string();
+    // match cv_string {
+    //     Ok(cv) => println!("CV: {}", cv),
+    //     Err(e) => eprintln!("Error: {}", e),
+    // }
 
-    let app = Router::new().route("/", get(hello));
+    let cors = CorsLayer::new()
+    .allow_origin(Any);
+
+    let app = Router::new().route("/", get(hello)).layer(cors);
 
     let app_port = config.get_app_port();
     println!("Listening on port {} 󱓟", app_port);
@@ -63,6 +66,6 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn hello() -> &'static str {
-    "Hello, World!"
+async fn hello() -> impl IntoResponse  {
+    Json(json!({"message": "Hello, World!"}))
 }
