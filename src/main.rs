@@ -1,67 +1,36 @@
-use serde_json::json;
-use tower_http::cors::{Any, CorsLayer};
-use axum::{
-    http::StatusCode, response::IntoResponse, routing::{get, post}, Json, Router
-};
-use openai_api_rust::chat::*;
-use openai_api_rust::completions::*;
-use openai_api_rust::*;
+use std::sync::Arc;
 
-use kukuleczka_backend::{config::Config, cv_builder::CVBuilder, forms::BasicForm};
-use serde::{Deserialize, Serialize};
+use serde_json::json;
+use tokio::sync::RwLock;
+use tower_http::cors::{Any, CorsLayer};
+use tower_http::services::ServeDir;
+use axum::{
+     response::IntoResponse, routing::get, Json, Router
+};
+
+use kukuleczka_backend::{config::Config, handlers::{basic_create, pdf}};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    // tracing_subscriber::fmt::init();
-    let config = Config::new();
-    let auth = Auth::new(config.get_openai_api_key());
-    let openai = OpenAI::new(auth, "https://api.openai.com/v1/");
-    let body = ChatBody {
-        model: "gpt-3.5-turbo".to_string(),
-        max_tokens: None,
-        temperature: Some(0_f32),
-        top_p: Some(0_f32),
-        n: Some(2),
-        stream: Some(false),
-        stop: None,
-        presence_penalty: None,
-        frequency_penalty: None,
-        logit_bias: None,
-        user: None,
-        messages: vec![Message {
-            role: Role::User,
-            content: "Hello!".to_string(),
-        }],
-    };
-    // let response = openai.chat_completion_create(&body);
-    // let choice = response.unwrap().choices;
-    // let message = &choice[0].message.as_ref().unwrap();
-    // println!("Response: {}", message.content);
-
-    let basic_form = BasicForm {
-        full_name: "Michael Scott".to_string(),
-        email: "test@test.com".to_string(),
-        programming_languages: vec!["PHP".to_string(), "Rust".to_string()],
-        education_level: "Inżynier".to_string(),
-    };
-
-    // let cv_string = CVBuilder::from(basic_form).create_cv_string();
-    // match cv_string {
-    //     Ok(cv) => println!("CV: {}", cv),
-    //     Err(e) => eprintln!("Error: {}", e),
-    // }
-
+    let config = Arc::new(RwLock::new(Config::new()));
     let cors = CorsLayer::new()
     .allow_origin(Any);
 
-    let app = Router::new().route("/", get(hello)).layer(cors);
+    let app = Router::new()
+        .route("/", get(hello))
+        .route("/basic/create", get(basic_create))
+        .route("/pdf", get(pdf))
+        .layer(cors)
+        .with_state(Arc::clone(&config))
+        .nest_service("/storage", ServeDir::new("storage"));
 
-    let app_port = config.get_app_port();
-    println!("Listening on port {} 󱓟", app_port);
+    let config_read = config.read().await;
+    let app_port = config_read.get_app_port();
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{app_port}"))
         .await
-        .unwrap();
-    axum::serve(listener, app).await.unwrap();
+        .expect("Couldn't create listener");
+    axum::serve(listener, app).await.expect("Couldn't start server");
+    println!("Listening on port {} 󱓟", app_port);
 
     Ok(())
 }

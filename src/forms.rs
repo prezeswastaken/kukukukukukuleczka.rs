@@ -7,3 +7,8 @@ pub struct BasicForm {
     pub programming_languages: Vec<String>,
     pub education_level: String,
 }
+
+#[derive(Debug, Deserialize)]
+pub struct PDFForm {
+    pub cv_string: String,
+}
