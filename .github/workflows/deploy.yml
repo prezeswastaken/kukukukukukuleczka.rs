@@ -1,0 +1,25 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow on push events to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Deploy to DigitalOcean
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.DROPLET_IP }}
+        username: ${{ secrets.DROPLET_USER }}
+        key: ${{ secrets.DROPLET_SSH_PRIVATE_KEY }}
+        script: |
+          cd /root/backend
+          git pull
+          cargo build --release

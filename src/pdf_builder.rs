@@ -1,7 +1,10 @@
 use std::{env::current_dir, fs::File, io::Write, path::Path, process::Command};
 
-use openai_api_rust::{chat::{ChatApi, ChatBody}, Auth, Message, OpenAI, Role};
 use anyhow::anyhow;
+use openai_api_rust::{
+    chat::{ChatApi, ChatBody},
+    Auth, Message, OpenAI, Role,
+};
 
 pub struct PdfBuilder {
     cv_string: String,
@@ -47,8 +50,13 @@ impl PdfBuilder {
             }],
         };
         let response = openai.chat_completion_create(&body);
-        let choice = response.map_err(|_| anyhow!("Something went wrong with response :("))?.choices;
-        let message = &choice[0].message.as_ref().ok_or_else(|| anyhow!("Couldn't get message from response"))?;
+        let choice = response
+            .map_err(|_| anyhow!("Something went wrong with response :("))?
+            .choices;
+        let message = &choice[0]
+            .message
+            .as_ref()
+            .ok_or_else(|| anyhow!("Couldn't get message from response"))?;
 
         let latex_content = message.content.clone();
         if latex_content.is_empty() {
@@ -67,7 +75,10 @@ impl PdfBuilder {
     }
 
     pub fn create_pdf(&mut self) -> anyhow::Result<String> {
-        let latex_file_name = self.latex_file_name.as_ref().ok_or_else(|| anyhow!("Latex file name is not set"))?;
+        let latex_file_name = self
+            .latex_file_name
+            .as_ref()
+            .ok_or_else(|| anyhow!("Latex file name is not set"))?;
         let latex_file_path = Path::new(&self.storage_path).join(latex_file_name);
         let pdf_file_name = latex_file_name.replace(".tex", ".pdf");
 

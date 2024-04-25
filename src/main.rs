@@ -1,20 +1,20 @@
 use std::sync::Arc;
 
+use axum::{response::IntoResponse, routing::get, Json, Router};
 use serde_json::json;
 use tokio::sync::RwLock;
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::services::ServeDir;
-use axum::{
-     response::IntoResponse, routing::get, Json, Router
-};
 
-use kukuleczka_backend::{config::Config, handlers::{basic_create, pdf}};
+use kukuleczka_backend::{
+    config::Config,
+    handlers::{basic_create, pdf},
+};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let config = Arc::new(RwLock::new(Config::new()));
-    let cors = CorsLayer::new()
-    .allow_origin(Any);
+    let cors = CorsLayer::new().allow_origin(Any);
 
     let app = Router::new()
         .route("/", get(hello))
@@ -29,12 +29,14 @@ async fn main() -> anyhow::Result<()> {
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{app_port}"))
         .await
         .expect("Couldn't create listener");
-    axum::serve(listener, app).await.expect("Couldn't start server");
+    axum::serve(listener, app)
+        .await
+        .expect("Couldn't start server");
     println!("Listening on port {} 󱓟", app_port);
 
     Ok(())
 }
 
-async fn hello() -> impl IntoResponse  {
-    Json(json!({"message": "Hello, World!"}))
+async fn hello() -> impl IntoResponse {
+    Json(json!({"message": "Hello, from github action!"}))
 }

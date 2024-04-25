@@ -43,8 +43,13 @@ impl CVBuilder {
             }],
         };
         let response = openai.chat_completion_create(&body);
-        let choice = response.map_err(|_| anyhow!("Something went wrong with response :("))?.choices;
-        let message = &choice[0].message.as_ref().ok_or_else(|| anyhow!("Couldn't get message from response"))?;
+        let choice = response
+            .map_err(|_| anyhow!("Something went wrong with response :("))?
+            .choices;
+        let message = &choice[0]
+            .message
+            .as_ref()
+            .ok_or_else(|| anyhow!("Couldn't get message from response"))?;
         Ok(message.content.clone())
     }
 }
