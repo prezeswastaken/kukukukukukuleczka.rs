@@ -24,3 +24,4 @@ jobs:
           cd /root/backend
           git pull
           cargo build --release
+          systemctl restart wheelwallet.cloud
