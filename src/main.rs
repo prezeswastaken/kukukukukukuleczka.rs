@@ -38,5 +38,5 @@ async fn main() -> anyhow::Result<()> {
 }
 
 async fn hello() -> impl IntoResponse {
-    Json(json!({"message": "Hello, from github action!"}))
+    Json(json!({"message": "Hello, from github action improved!"}))
 }
