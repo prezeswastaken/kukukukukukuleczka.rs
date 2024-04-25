@@ -20,6 +20,7 @@ jobs:
         username: ${{ secrets.DROPLET_USER }}
         key: ${{ secrets.DROPLET_SSH_PRIVATE_KEY }}
         script: |
+          export PATH="$HOME/.cargo/bin:$PATH"
           cd /root/backend
           git pull
           cargo build --release
