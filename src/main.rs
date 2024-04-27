@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use axum::routing::post;
 use axum::{response::IntoResponse, routing::get, Json, Router};
 use serde_json::json;
 use tokio::sync::RwLock;
@@ -18,8 +19,8 @@ async fn main() -> anyhow::Result<()> {
 
     let app = Router::new()
         .route("/", get(hello))
-        .route("/basic/create", get(basic_create))
-        .route("/pdf", get(pdf))
+        .route("/basic/create", post(basic_create))
+        .route("/pdf", post(pdf))
         .layer(cors)
         .with_state(Arc::clone(&config))
         .nest_service("/storage", ServeDir::new("storage"));
