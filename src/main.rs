@@ -15,7 +15,7 @@ use kukuleczka_backend::{
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let config = Arc::new(RwLock::new(Config::new()));
-    let cors = CorsLayer::new().allow_origin(Any);
+    let cors = CorsLayer::new().allow_origin(Any).allow_headers(Any).allow_methods(Any);
 
     let app = Router::new()
         .route("/", get(hello))
