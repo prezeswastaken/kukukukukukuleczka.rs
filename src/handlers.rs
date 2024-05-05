@@ -1,6 +1,7 @@
 use std::{fs::File, io::Read, path::Path, sync::Arc};
 
 use axum::{debug_handler, extract::State, http::StatusCode, response::IntoResponse, Json};
+use serde::Serialize;
 use serde_json::json;
 use tokio::sync::RwLock;
 
@@ -8,6 +9,7 @@ use crate::{
     config::Config,
     cv_builder::CVBuilder,
     forms::{BasicForm, PDFForm},
+    jobs::{get_jobs, Job, JobCheckRequest, JobCheckResult},
     pdf_builder::PdfBuilder,
     utils::clean_storage,
 };
@@ -43,4 +45,31 @@ pub async fn pdf(
     clean_storage(storage_path.to_string()).map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
 
     Ok(Json(json!({"pdf_link": pdf_link})))
+}
+
+pub async fn show_jobs() -> Json<Vec<Job>> {
+    let jobs = get_jobs();
+    Json(jobs)
+}
+
+#[derive(Serialize, Clone)]
+pub struct JobResponse {
+    pub job: Job,
+    pub result: JobCheckResult,
+}
+
+#[debug_handler]
+pub async fn check_job(Json(job_request): Json<JobCheckRequest>) -> Json<Vec<JobResponse>> {
+    let jobs = get_jobs();
+    let results = jobs
+        .clone()
+        .into_iter()
+        .filter_map(|job| job.get_score(&job_request).ok())
+        .enumerate()
+        .map(|(i, score)| JobResponse {
+            job: jobs[i].clone(),
+            result: score,
+        })
+        .collect::<Vec<_>>();
+    Json(results)
 }

@@ -3,6 +3,7 @@ use std::sync::Arc;
 use axum::routing::post;
 use axum::{response::IntoResponse, routing::get, Json, Router};
 use kukuleczka_backend::enums::{Language, Technology};
+use kukuleczka_backend::handlers::*;
 use kukuleczka_backend::jobs::{get_jobs, JobCheckRequest};
 use serde_json::json;
 use tokio::sync::RwLock;
@@ -17,16 +18,16 @@ use kukuleczka_backend::{
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     // TEST
-    let jobs = get_jobs();
-    let job = jobs.get(0).unwrap();
-    let job_request = JobCheckRequest {
-        years_of_experience: 5,
-        technologies: vec![Technology::JavaScript, Technology::TypeScript, Technology::Java, Technology::Go, Technology::Git],
-        languages: vec![Language::Engilsh, Language::Polski],
-        soft_skiills: 3,
-    };
-    let score = job.get_score(&job_request);
-    println!("Score for job {:?}: {:?}", job, score);
+    // let jobs = get_jobs();
+    // let job = jobs.get(0).unwrap();
+    // let job_request = JobCheckRequest {
+    //     years_of_experience: 5,
+    //     technologies: vec![  Technology::Java, Technology::Go, Technology::JavaScript, Technology::TypeScript ],
+    //     languages: vec![Language::Polski],
+    //     soft_skiills: 0,
+    // };
+    // let score = job.get_score(&job_request);
+    // println!("Score: {:?}", score.unwrap());
 
     // END OF TEST
 
@@ -40,6 +41,8 @@ async fn main() -> anyhow::Result<()> {
         .route("/", get(hello))
         .route("/basic/create", post(basic_create))
         .route("/pdf", post(pdf))
+        .route("/jobs", get(show_jobs))
+        .route("/check-job", post(check_job))
         .layer(cors)
         .with_state(Arc::clone(&config))
         .nest_service("/storage", ServeDir::new("storage"));

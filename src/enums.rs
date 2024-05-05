@@ -7,6 +7,7 @@ pub enum Technology {
     Java,
     Python,
     Ruby,
+    #[serde(rename = "C#")]
     CSharp,
     Go,
     Rust,
@@ -14,6 +15,7 @@ pub enum Technology {
     Kotlin,
     Scala,
     PHP,
+    #[serde(rename = "C++")]
     CPlusPlus,
     C,
     Haskell,
@@ -63,7 +65,7 @@ impl Technology {
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub enum Language {
-    Engilsh,
+    English,
     Polski,
     Deutsch,
     Français,
@@ -73,7 +75,7 @@ pub enum Language {
 impl Language {
     pub fn to_string(&self) -> &'static str {
         match *self {
-            Language::Engilsh => "English",
+            Language::English => "English",
             Language::Polski => "Polski",
             Language::Deutsch => "Deutsch",
             Language::Français => "Français",

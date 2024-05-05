@@ -23,15 +23,15 @@ extern crate ndarray;
 extern crate ndarray_rand;
 
 use ndarray::prelude::*;
-use ndarray_rand::RandomExt;
 use ndarray_rand::rand_distr::Uniform;
+use ndarray_rand::RandomExt;
 use std::f64;
 
 fn sigmoid(x: f64) -> f64 {
     1.0 / (1.0 + f64::exp(-x))
 }
 
-fn propagation(inputs: Array1<f64>) -> Array1<f64> {
+pub fn propagation(inputs: Array1<f64>) -> Array1<f64> {
     let weights = array![[23.71784994], [27.84819623], [0.94665866], [11.42126197]];
     let weights = Array2::from(weights);
     let dot_product = inputs.dot(&weights);
