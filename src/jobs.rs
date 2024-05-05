@@ -14,7 +14,7 @@ pub struct Job {
 
 impl Job {
     pub fn get_score(&self, request: &JobCheckRequest) -> Vec<f32> {
-        let years_check = if self.years_of_experience >= request.years_of_experience {
+        let years_check = if request.years_of_experience >= self.years_of_experience {
             1.0
         } else {
             0.0
@@ -35,10 +35,14 @@ impl Job {
             .iter()
             .filter(|lang| request.languages.contains(lang))
             .count() as f32
-            / request.languages.len() as f32;
+            / self.languages.len() as f32;
         println!("{:?}", language_check);
 
-        let soft_skills_check = self.soft_skiills as f32 / request.soft_skiills as f32;
+        let soft_skills_check = match request.soft_skiills.cmp(&self.soft_skiills) {
+            std::cmp::Ordering::Greater => 1.0,
+            std::cmp::Ordering::Equal => 1.0,
+            std::cmp::Ordering::Less => request.soft_skiills as f32 / self.soft_skiills as f32,
+        };
         println!("{:?}", soft_skills_check);
 
         vec![years_check, technology_check, language_check, soft_skills_check]

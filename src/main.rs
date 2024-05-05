@@ -20,8 +20,8 @@ async fn main() -> anyhow::Result<()> {
     let jobs = get_jobs();
     let job = jobs.get(0).unwrap();
     let job_request = JobCheckRequest {
-        years_of_experience: 4,
-        technologies: vec![Technology::JavaScript, Technology::TypeScript, Technology::Java, Technology::Go],
+        years_of_experience: 5,
+        technologies: vec![Technology::JavaScript, Technology::TypeScript, Technology::Java, Technology::Go, Technology::Git],
         languages: vec![Language::Engilsh, Language::Polski],
         soft_skiills: 3,
     };
