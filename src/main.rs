@@ -2,6 +2,8 @@ use std::sync::Arc;
 
 use axum::routing::post;
 use axum::{response::IntoResponse, routing::get, Json, Router};
+use kukuleczka_backend::enums::{Language, Technology};
+use kukuleczka_backend::jobs::{get_jobs, JobCheckRequest};
 use serde_json::json;
 use tokio::sync::RwLock;
 use tower_http::cors::{Any, CorsLayer};
@@ -14,8 +16,25 @@ use kukuleczka_backend::{
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    // TEST
+    let jobs = get_jobs();
+    let job = jobs.get(0).unwrap();
+    let job_request = JobCheckRequest {
+        years_of_experience: 4,
+        technologies: vec![Technology::JavaScript, Technology::TypeScript, Technology::Java, Technology::Go],
+        languages: vec![Language::Engilsh, Language::Polski],
+        soft_skiills: 3,
+    };
+    let score = job.get_score(&job_request);
+    println!("Score for job {:?}: {:?}", job, score);
+
+    // END OF TEST
+
     let config = Arc::new(RwLock::new(Config::new()));
-    let cors = CorsLayer::new().allow_origin(Any).allow_headers(Any).allow_methods(Any);
+    let cors = CorsLayer::new()
+        .allow_origin(Any)
+        .allow_headers(Any)
+        .allow_methods(Any);
 
     let app = Router::new()
         .route("/", get(hello))

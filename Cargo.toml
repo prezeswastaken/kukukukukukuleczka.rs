@@ -10,6 +10,8 @@ anyhow = "1.0.82"
 axum = { version = "0.7.5", features = ["macros", "json"] }
 axum-macros = "0.4.1"
 dotenvy = "0.15.7"
+ndarray = "0.15.6"
+ndarray-rand = "0.14.0"
 openai-api = "0.1.4"
 openai_api_rust = "0.1.8"
 serde = { version = "1.0.198", features = ["derive"] }

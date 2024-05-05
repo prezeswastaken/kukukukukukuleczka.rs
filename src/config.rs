@@ -15,6 +15,7 @@ impl Config {
             std::env::var("STORAGE_ABSOLUTE_PATH").expect("STORAGE_ABSOLUTE_PATH is not set");
         let app_url = std::env::var("APP_URL").expect("APP_URL is not set");
 
+
         Self {
             openai_api_key,
             app_port,
