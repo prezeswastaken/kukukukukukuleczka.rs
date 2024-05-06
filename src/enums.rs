@@ -28,6 +28,7 @@ pub enum Technology {
     Docker,
     Kubernetes,
     Jenkins,
+    #[serde(rename = "GitHub Actions")]
     GitHubActions,
 }
 
