@@ -110,5 +110,21 @@ pub fn get_jobs() -> Vec<Job> {
             languages: vec![Language::English, Language::Español],
             soft_skiills: 1,
         },
+        Job {
+            title: "Software Engineer".to_string(),
+            company: "WhiteChocolate".to_string(),
+            years_of_experience: 1,
+            technologies: vec![Technology::PHP, Technology::Git, Technology::GitHubActions],
+            languages: vec![Language::English, Language::Polski],
+            soft_skiills: 1,
+        },
+        Job {
+            title: "Dev ops engineer".to_string(),
+            company: "Bocian".to_string(),
+            years_of_experience: 0,
+            technologies: vec![Technology::Shell, Technology::Git, Technology::GitHubActions],
+            languages: vec![Language::English, Language::Polski],
+            soft_skiills: 3,
+        },
     ]
 }
